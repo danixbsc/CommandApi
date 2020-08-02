@@ -10,6 +10,6 @@ namespace CommandAPI.Models
 
         }
 
-        DbSet<Command> CommandItems { get; set; }
+        public DbSet<Command> CommandItems { get; set; }
     }
 }

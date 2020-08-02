@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using CommandAPI.Models;
 
 namespace CommandAPI.Controllers
 {
@@ -7,10 +8,14 @@ namespace CommandAPI.Controllers
     [ApiController]
     public class CommandsController : ControllerBase
     {
+        private readonly CommandContext _context;
+
+        public CommandsController(CommandContext context) => this._context = context;
+
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<Command>> Get()
         {
-            return new string[]{"this", "is", "hard", "coded"};
+            return _context.CommandItems;
         }
     }
 }
