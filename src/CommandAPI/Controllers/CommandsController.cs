@@ -13,7 +13,7 @@ namespace CommandAPI.Controllers
         public CommandsController(CommandContext context) => this._context = context;
 
         [HttpGet]
-        public ActionResult<IEnumerable<Command>> Get()
+        public ActionResult<IEnumerable<Command>> GetCommandsItem()
         {
             return _context.CommandItems;
         }
