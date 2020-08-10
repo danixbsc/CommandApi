@@ -102,5 +102,48 @@ namespace CommandAPI.Tests
             // ASSERT
             Assert.IsType<ActionResult<IEnumerable<Command>>>(items);
         }
+
+        [Fact]
+        public void GetCommandItem_ReturnsNullResults_WhenInvalidId()
+        {
+            // ACT
+            var command = controller.GetCommandItem(0);
+
+            // ASSERT
+            Assert.Null(command.Value);
+        }
+
+        [Fact]
+        public void GetCommandItem_Return404NotFound_WhenInvalidId()
+        {
+            // ACT
+            var command = controller.GetCommandItem(0);
+
+            // ASSERT
+            Assert.IsType<NotFoundResult>(command.Result);
+        }
+
+        [Fact]
+        public void GetCommandItem_ReturnCorrectType()
+        {
+            // ARRANGE
+            var command = new Command()
+            {
+                HowTo = "Do something",
+                Platform = "Some platform",
+                CommandLine = "Soma command line"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            var id = command.Id;
+
+            // ACT
+            var commandReturned = controller.GetCommandItem(id);
+
+            // ASSERT
+            Assert.IsType<ActionResult<Command>>(commandReturned);
+        }
     }
 }
