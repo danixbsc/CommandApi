@@ -192,7 +192,7 @@ namespace CommandAPI.Tests
 
         
         [Fact]
-        public void CreateCommandItem_Returns201_WhenValidObject() 
+        public void PostCommandItem_Returns201_WhenValidObject() 
         {
             // Arrange
             Command command = new Command() 
@@ -208,6 +208,100 @@ namespace CommandAPI.Tests
             // ASSERT
             Assert.IsType<CreatedAtActionResult>(result.Result); 
             
+        }
+
+        [Fact]
+        public void PutCommandItem_AttributeUpdated_WhenValidObject()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do Somenthing",
+                Platform = "Some platform",
+                CommandLine = "Some command line"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+            
+            // ACT
+            command.HowTo = "Do something else";
+
+            controller.PutCommandItem(command.Id, command);
+            var result = dbContext.CommandItems.Find(command.Id);
+
+            //ASSERT
+            Assert.Equal("Do something else", result.HowTo);
+        }
+
+        [Fact]
+        public void PutCommandItem_Returns204_WhenValidObject()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do Somenthing",
+                Platform = "Some platform",
+                CommandLine = "Some command line"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+            
+            // ACT
+            command.HowTo = "Do something else";
+
+            var result = controller.PutCommandItem(command.Id, command);
+            
+            //ASSERT
+            Assert.IsType<NoContentResult>(result.Result);
+        }
+
+        [Fact]
+        public void PutCommandItem_Returns400BadRequest_WhenInvalidObject()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do something",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            // ACT
+            int cmdId = command.Id + 1;
+            command.HowTo = "Do something else";
+
+            var result = controller.PutCommandItem(cmdId, command);
+
+            // ASSERT
+            Assert.IsType<BadRequestResult>(result.Result);
+        }
+        
+        [Fact]
+        public void PutCommandItem_ItemUnchanged_WhenInvalidObject()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do something",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+            // ACT
+            Command command2 = new Command {
+                Id = command.Id,
+                HowTo = "Do something else",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+
+            controller.PutCommandItem(command.Id + 1, command2);
+            var result = dbContext.CommandItems.Find(command.Id);
+            // ASSERT
+            Assert.Equal("Do something", result.HowTo);
         }
     }
 }
