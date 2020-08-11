@@ -252,11 +252,11 @@ namespace CommandAPI.Tests
             var result = controller.PutCommandItem(command.Id, command);
             
             //ASSERT
-            Assert.IsType<NoContentResult>(result.Result);
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public void PutCommandItem_Returns400BadRequest_WhenInvalidObject()
+        public void PutCommandItem_Returns400BadRequest_WhenInvalidObjectId()
         {
             // ARRANGE
             Command command = new Command {
@@ -275,11 +275,11 @@ namespace CommandAPI.Tests
             var result = controller.PutCommandItem(cmdId, command);
 
             // ASSERT
-            Assert.IsType<BadRequestResult>(result.Result);
+            Assert.IsType<BadRequestResult>(result);
         }
         
         [Fact]
-        public void PutCommandItem_ItemUnchanged_WhenInvalidObject()
+        public void PutCommandItem_ItemUnchanged_WhenInvalidObjectId()
         {
             // ARRANGE
             Command command = new Command {
@@ -303,5 +303,69 @@ namespace CommandAPI.Tests
             // ASSERT
             Assert.Equal("Do something", result.HowTo);
         }
+
+        [Fact]
+        public void DeleteCommandItem_Returns200Ok_WhenValidObjectId()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do something",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+            
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            // ACT
+            var result = controller.DeleteCommandItem(command.Id);
+            
+            // ASSERT
+            Assert.IsType<OkResult>(result);
+        }
+        
+        [Fact]
+        public void DeleteCommandItem_Returns400BadRequest_WhenInvalidObjectId()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do something",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+            
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            // ACT
+            var result = controller.DeleteCommandItem(command.Id + 1);
+            
+            // ASSERT
+            Assert.IsType<BadRequestResult>(result);
+        }
+
+        [Fact]
+        public void DeleteCommandItem_ItemsCountNotChange_WhenInvalidObjectId()
+        {
+            // ARRANGE
+            Command command = new Command {
+                HowTo = "Do something",
+                Platform = "platform",
+                CommandLine = "command"
+            };
+            
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            int oldCount = dbContext.CommandItems.Count();
+
+            // ACT
+            var result = controller.DeleteCommandItem(command.Id + 1);
+            int actualCount =dbContext.CommandItems.Count();
+
+            // ASSERT
+            Assert.Equal(oldCount, actualCount);
+        }
+        
     }
 }

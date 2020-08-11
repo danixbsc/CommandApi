@@ -1,6 +1,7 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using CommandAPI.Models;
 
 namespace CommandAPI.Controllers
@@ -51,7 +52,7 @@ namespace CommandAPI.Controllers
         }
 
         [HttpPut]
-        public ActionResult<Command> PutCommandItem(int id, Command command)
+        public IActionResult PutCommandItem(int id, Command command)
         {
             if(id != command.Id)
             {
@@ -62,6 +63,22 @@ namespace CommandAPI.Controllers
             _context.SaveChanges();
 
             return NoContent();
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteCommandItem(int id)
+        {
+            Command command = _context.CommandItems.Find(id);
+
+            if(command == null)
+            {
+                return BadRequest();
+            } 
+
+            _context.CommandItems.Remove(command);
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }
