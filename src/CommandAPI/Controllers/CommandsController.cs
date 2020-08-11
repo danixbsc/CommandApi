@@ -31,5 +31,22 @@ namespace CommandAPI.Controllers
 
             return command;
         }
+        
+        [HttpPost]
+        public ActionResult<Command> PostCommandItem(Command command) 
+        {
+            _context.CommandItems.Add(command);
+            
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch
+            {
+                BadRequest();
+            }
+
+            return CreatedAtAction("GetCommandItem", new Command(){Id = command.Id}, command);
+        }
     }
 }

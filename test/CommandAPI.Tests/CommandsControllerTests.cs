@@ -145,5 +145,69 @@ namespace CommandAPI.Tests
             // ASSERT
             Assert.IsType<ActionResult<Command>>(commandReturned);
         }
+
+        [Fact]
+        public void GetCommandItem_ReturnCorrectResource_WhenIdIsCorrect()
+        {
+            // ARRANGE
+            var command = new Command()
+            {
+                HowTo = "Do something",
+                Platform = "Some platform",
+                CommandLine = "Soma command line"
+            };
+
+            dbContext.CommandItems.Add(command);
+            dbContext.SaveChanges();
+
+            var id = command.Id;
+
+            // ACT
+            var commandReturned = controller.GetCommandItem(id);
+
+            // ASSERT
+            Assert.Equal(commandReturned.Value.Id, id);
+        }
+
+        [Fact]
+        public void PostCommandItem_ItemCountIncrementBy1_WhenValidObject() 
+        {
+            // Arrange
+            Command command = new Command() 
+            {
+                HowTo = "Do something",
+                Platform = "Some platoforme",
+                CommandLine = "Some command"
+            };
+
+            int oldCount = dbContext.CommandItems.Count();
+
+            // ACT
+            controller.PostCommandItem(command);
+            
+            // ASSERT
+            Assert.Equal(oldCount + 1, dbContext.CommandItems.Count());
+            
+        }
+
+        
+        [Fact]
+        public void CreateCommandItem_Returns201_WhenValidObject() 
+        {
+            // Arrange
+            Command command = new Command() 
+            {
+                HowTo = "Do something",
+                Platform = "Some platoforme",
+                CommandLine = "Some command"
+            };
+
+            // ACT
+            var result = controller.PostCommandItem(command);
+            
+            // ASSERT
+            Assert.IsType<CreatedAtActionResult>(result.Result); 
+            
+        }
     }
 }
